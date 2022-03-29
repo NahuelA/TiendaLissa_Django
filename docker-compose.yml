@@ -6,7 +6,7 @@ services:
   db:
     # Este servicio crea una base de datos de tipo Postgres.
     image: postgres:13.2
-    container_name: tienda_lissa_cdp
+    container_name: tienda_lissa_cdb
     restart: always
     volumes:
       # Aquí se enlaza el contenido de dentro del contenedor con el directorio en nuestra PC
@@ -24,7 +24,7 @@ services:
       # Enlazamos el puerto en el que trabaja Postgres, por defecto el 5432
       - 5432:5432
 
-  modulo_6:
+  tienda_lissa_service:
     # build es el lugar desde donde toma los archivos para generar la imagen.
     build: .
     # Imágen a utilizar:
@@ -44,6 +44,6 @@ services:
         - "8000:8000"
     # Control de consola:
     stdin_open: true
-    tty: true
+    # tty: true
     # depends_on: ["db"] 
     # command: python marvel/manage.py runserver 0.0.0.0:8000
