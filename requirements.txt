@@ -12,3 +12,5 @@ fontawesomefree==6.0.0
 # pyyaml==5.4.1
 # Drivers para trabajar con Postgres en linux:
 psycopg2-binary>=2.8
+#https://github.com/django/django/blob/main/docs/intro/tutorial03.txt
+#https://github.com/django-cms/django-cms

@@ -131,6 +131,8 @@
                                 - Porcentaje obtenido $+0,4 (27%)
                                 - Total ventas: 22 | Saldos: 14
 
+    # IDEAS
+        - Create endpoint to search sales for years
 -->
 
 # Web app tienda lissa
