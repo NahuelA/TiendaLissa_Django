@@ -8,5 +8,32 @@
 </head>
 <body>
     
+    <form action="#">{% csrf_token %}
+
+        <div class="container-form">
+
+            <div class="name-field">
+                {{form.name.label}}
+                {{form.name}}
+            </div>
+            <div class="description-field">
+                {{form.description.label}}
+                {{ form.description}}
+            </div>
+            <div class="count-field">
+                {{form.count.label}}
+                {{ form.count}}
+            </div>
+            <div class="price-field">
+                {{form.price.label}}
+                {{ form.price}}
+            </div>
+            <div class="paid_out-field">
+                {{form.paid_out.label}}
+                {{ form.paid_out}}
+            </div>
+        </div>
+        <button type="submit" class="send-data" id="send-data">Cargar datos</button>
+    </form>
 </body>
 </html>
