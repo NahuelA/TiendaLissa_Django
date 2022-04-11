@@ -133,6 +133,7 @@
 
     # IDEAS
         - Create endpoint to search sales for years
+        - Implement API for weather
 -->
 
 # Web app tienda lissa
@@ -144,6 +145,6 @@ Aplicación web para controlar ventas y deudas de clientes
     - Buscador de registros
     - Resumenes diarios, semanales y mensuales
     - Registro de compras realizadas al proveedor
-
+    
 ## Version 1.1
 ## License ...
