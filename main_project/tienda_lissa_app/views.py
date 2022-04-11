@@ -1,21 +1,31 @@
+#========|
+# Imports|
+#========|
+
+# Typing
+from typing import (
+    Any,
+    ByteString,
+    Literal,
+    Iterable,
+)
+from django.http import HttpResponse
+
 # For render templates context
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
 from django.template import loader
 
 # For handling errors
-from django.shortcuts import get_object_or_404
-from django.http import Http404
+#...
 
-# Models
-from tienda_lissa_app.models import TiendaLissa
+# Local models
+from tienda_lissa_app.models import ModelSales
 
-#=======================
-# Views for class
-#=======================
+# Local forms
+from tienda_lissa_app import forms
 
-# The master class-based base view. All other
-# class-based views inherit from this base class
+
+# Generic views
 from django.views.generic.base import (
 
     # TemplateView and RedirectView inherit View class
@@ -25,103 +35,95 @@ from django.views.generic.base import (
 # Libraries of thirds
 import datetime
 
-#=======================
-# Create your views here.
-#=======================
-
-# Tests
-def tests(request):
-    # Views with functions
-    # Example
-    date_now = datetime.datetime.now()
-    content = "<html><body>It is now %s.</body></html>" % date_now
-    
-    # Englobe in try/except
-    try:
-        print(HttpResponse(status=201,content=content).getvalue())
-        return HttpResponse(status=201,content=content)
-    except Exception:
-        return Http404()
+#========================|
+# Create your views here.|
+#========================|
 
 
-# Views in class
-# Example:
-# class MyView(View):
-    # Flowchart:
-        # setup()
-        # dispatch()
-        # http_method_not_allowed()
-        # options()
+# CRUD to model
 
-    # Attributes for View class
-    # http_method_names = List ['get', 'post', 'put',
-    #                           'patch', 'delete', 'head',
-    #                           'options', 'trace']
+#**************|
+# Create sales:|
+#**************|
 
-    # def get(self, request, *args, **kwargs):
-    #     method_name = self.http_method_names[0] # This get method
-    #     return HttpResponse(f'Hello, World!{method_name}') # Response get
+class AddSales(TemplateView):
 
-class Templates(TemplateView):
-    # Flowchart:
-        # setup()
-        # dispatch()
-        # http_method_not_allowed()
-        # get_context_data()
+    """
+    Create records and save in your model
+    """
+    # NOTE: To obtain request data, we depend from HTTP method:
+    # GET METHOD: request.GET['any']   || request.GET.get('any')
+    # POST METHOD: request.POST['any'] || request.POST.get('any')
+    # POST METHOD: request.data['any'] || request.data.get('any')
 
-    # Template name
-    template_name = "test.html"
-    # Context for template
-    # You can also add context using the extra_context keyword argument for as_view().
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['latest_articles'] = TiendaLissa.objects.all()[:5]
-        return context
-
-class Redirecting(RedirectView):
-    # Flowchart:
-        #setup()
-        # dispatch()
-        # http_method_not_allowed()
-        # get_redirect_url()
-    
-    permanent = False
-    query_string = True
-    pattern_name = 'my-view'
-
-    def get_redirect_url(self, *args, **kwargs):
-        # article = get_object_or_404(TiendaLissa, pk=kwargs['pk'])
-        # article.update_counter()
-        return super().get_redirect_url(*args, **kwargs)
-
-# My crud
-class CrudSales(TemplateView):
-    # Vars
-    # template_name = ""
-        # Attributes for View class
-    # http_method_names = List ['get', 'post', 'put',
-    #                           'patch', 'delete', 'head',
-    #                           'options', 'trace']
-
-    if TemplateView.http_method_names.index == 1:
+    # Get form
+    def get(self, request):
 
         try:
-            a = TiendaLissa(name=name,
-                            description=description,
-                            count=count,
-                            price=price,
-                            paid_out=paid_out)
-            # a.save()
-            # a.delete()
-        except:
-            pass
-class Index(TemplateView):
 
-    
-    def index(request):
-        latest_question_list = TiendaLissa.objects.order_by('-pub_date')[:5]
-        template = loader.get_template('polls/index.html')
-        context = {
-            'latest_question_list': latest_question_list,
-        }
-        return HttpResponse(template.render(context, request))
+            template_name = "sales/sales_register.html"
+            form = forms.FormSales()
+            context = {"form":form}
+            # Return form for create sale
+            return render(request,template_name,context)
+
+        except Exception as err:
+            # Display template with error info
+            return err
+
+    # Post form
+    def post(self,request):
+        
+        if request.POST == 'POST':
+            try:
+                # Counter variable from form atributes
+                form =  forms.FormSales(request.POST)
+                print("FORM POST",form)
+
+                # validating
+                form.validation_data()
+                
+                if form.is_valid():
+
+                    total = 0
+
+                    # Create new sale with values form
+                    for sale in form:
+                        last_record = sale['name']
+
+                        # If the sale is from the same person
+                        if last_record == sale['name']:
+                            # Sum all prices from same person
+                            total = total + sale['price']
+                            newSale = ModelSales(
+                                                sale['name'],
+                                                sale['description'],
+                                                sale['count'],
+                                                sale['price'],
+                                                sale['paid_out'],
+                                                total)
+                            newSale.save()
+            except Exception as err:
+                return err
+
+        else:
+            form = forms.FormSales()
+
+#************|
+# Read Sales:|
+#************|
+
+class ReadSales(TemplateView):
+
+    template_name = "index.html"
+
+    def get_context_data(self, **kwargs):
+        
+        data = ModelSales.objects.all()
+        context = {"data":data}
+        return super().get_context_data()
+
+
+#**************|
+# Search sales:|
+#**************|
