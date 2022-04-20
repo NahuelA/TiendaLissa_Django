@@ -37,16 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Local apps
     'tienda_lissa_app',
+    # Thirty apps
+    'bootstrap5',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
-    # No usare esto 
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
 
+    # Implement later
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework.authentication.TokenAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
     # ),
 
     # 'DEFAULT_PERMISSION_CLASSES': (
@@ -69,7 +72,7 @@ ROOT_URLCONF = 'main_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -136,8 +139,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # from os library import path
-# STATIC_ROOT = path.join(BASE_DIR, 'static')
-# STATICFILES_DIRS = (str(BASE_DIR.joinpath('staticfiles')),)
+STATIC_ROOT = path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (str(BASE_DIR.joinpath('staticfiles')),)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

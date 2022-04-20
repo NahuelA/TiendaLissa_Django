@@ -7,5 +7,5 @@ urlpatterns = [
     # Template home
     path('',views.ReadSales.as_view(), name='home'),
     # Templates for crud
-    path('ventas/',views.AddSales.as_view(), name='form-ventas'),
+    path('crear-ventas/',views.CreateRecordSale.as_view(), name='form-ventas'),
 ]
