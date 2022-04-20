@@ -3,6 +3,7 @@
 #========|
 
 # Typing
+import json
 from typing import (
     Any,
     ByteString,
@@ -10,19 +11,23 @@ from typing import (
     Iterable,
 )
 from django.http import HttpResponse
-
-# For render templates context
 from django.shortcuts import render
-from django.template import loader
-
-# For handling errors
-#...
 
 # Local models
 from tienda_lissa_app.models import ModelSales
 
 # Local forms
 from tienda_lissa_app import forms
+
+from django.views.generic.list import ListView
+# Generic edit
+from django.views.generic.edit import (
+
+    FormView,
+    CreateView,
+    UpdateView,
+    DeleteView
+)
 
 
 # Generic views
@@ -46,84 +51,48 @@ import datetime
 # Create sales:|
 #**************|
 
-class AddSales(TemplateView):
+class ReadSales(ListView):
+    template_name = ""
 
-    """
-    Create records and save in your model
-    """
     # NOTE: To obtain request data, we depend from HTTP method:
     # GET METHOD: request.GET['any']   || request.GET.get('any')
     # POST METHOD: request.POST['any'] || request.POST.get('any')
     # POST METHOD: request.data['any'] || request.data.get('any')
+    def get_context_data(self, **kwargs):
+        
+        return super().get_context_data(**kwargs)
+    
+# Create sale
+class CreateRecordSale(CreateView):
 
-    # Get form
-    def get(self, request):
+    # My model
+    model = ModelSales
+    form_class = forms.FormSales
+    # For indicate the form
+    template_name = 'sales/sales_register.html'
+    template_name_suffix = '_form'
+    # If save successful, redirec to:
+    success_url = 'http://localhost:8000/tiendalissa/crear-ventas/'
 
-        try:
-
-            template_name = "sales/sales_register.html"
-            form = forms.FormSales()
-            context = {"form":form}
-            # Return form for create sale
-            return render(request,template_name,context)
-
-        except Exception as err:
-            # Display template with error info
-            return err
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['records'] = ModelSales.objects.all()
+        context['form'] = self.form_class
+        return context
 
     # Post form
     def post(self,request):
         
-        if request.POST == 'POST':
-            try:
-                # Counter variable from form atributes
-                form =  forms.FormSales(request.POST)
-                print("FORM POST",form)
+        # save one record at a time
+        if request.method == "POST":
+            form = self.form_class(request.POST)
 
-                # validating
-                form.validation_data()
+            if form.is_valid():
                 
-                if form.is_valid():
-
-                    total = 0
-
-                    # Create new sale with values form
-                    for sale in form:
-                        last_record = sale['name']
-
-                        # If the sale is from the same person
-                        if last_record == sale['name']:
-                            # Sum all prices from same person
-                            total = total + sale['price']
-                            newSale = ModelSales(
-                                                sale['name'],
-                                                sale['description'],
-                                                sale['count'],
-                                                sale['price'],
-                                                sale['paid_out'],
-                                                total)
-                            newSale.save()
-            except Exception as err:
-                return err
-
-        else:
-            form = forms.FormSales()
-
-#************|
-# Read Sales:|
-#************|
-
-class ReadSales(TemplateView):
-
-    template_name = "index.html"
-
-    def get_context_data(self, **kwargs):
+                form.save()
+                return render(request,self.template_name,{'form':form})
+        # If form is invalid, return form
+        return render(request,self.template_name,{'form':form})
         
-        data = ModelSales.objects.all()
-        context = {"data":data}
-        return super().get_context_data()
-
-
-#**************|
-# Search sales:|
-#**************|
+class UpdateRecordSale(UpdateView):
+    pass
