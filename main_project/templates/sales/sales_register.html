@@ -1,12 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar venta | Tienda Lissa</title>
+
+    {% block others_links %}
+        <link rel="stylesheet" href="{% static 'tienda_lissa/css/sales.css' %}">
+    {% endblock %}
+    {% block title %}
+        <title>Registrar venta | Tienda Lissa</title>
+    {% endblock %}
 </head>
 <body>
     
+    {% block maincontent %}
+    <main>
+
+        <section class="section-formsale">
+
+            <form action="{% url 'create-ventas' %}" method="post" class="form-main">{% csrf_token %}
+                <div class="content-form-main">
+
+                    <div class="content-form">
+    
+                        <div class="name-field content-items">
+                            <label for="id_name" class="label-name">{{form.name.label}}</label>
+                            {{form.name}}
+                        </div>
+                        
+                        <div class="count-field content-items">
+                            <label for="id_count" class="label-count">{{form.count.label}}</label>
+                            {{ form.count}}
+                        </div>
+    
+                        <div class="description-field content-items">
+                            <label for="id_description" class="label-description">{{form.description.label}}</label>
+                            {{ form.description}}
+                        </div>
+    
+                        <div class="price-field content-items">
+                            <label for="id_price" class="label-price">{{form.price.label}}</label>
+                            {{ form.price}}
+                        </div>
+    
+                        <div class="paid_out-field">
+                            <label for="id_paid_out" class="label-paid-out">{{form.paid_out.label}}</label>
+                            {{ form.paid_out}}
+                        </div>
+                    </div>
+                </div>
+                <div class="content-button">
+                    <button type="submit" class="send-data" id="send-data">Cargar datos</button>
+                </div>
+            </form>
+        </section>
+    </main>
+    {% endblock %}
 </body>
 </html>

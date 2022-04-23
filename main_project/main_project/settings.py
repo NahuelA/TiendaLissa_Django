@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'tienda_lissa_app',
     # Thirty apps
     'bootstrap5',
+    'fontawesomefree',
 ]
 
 REST_FRAMEWORK = {

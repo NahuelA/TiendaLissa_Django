@@ -23,7 +23,7 @@ class ModelSales(models.Model):
                                 decimal_places=2,
                                 db_index=True,)
 
-    paid_out = models.BooleanField(verbose_name="Pagado",default=True, db_index=True)
+    paid_out = models.BooleanField(verbose_name="Pagado",default="Pagado", db_index=True)
     total = models.FloatField(verbose_name="Total",default=0.00, db_index=True)
 
     class Meta:

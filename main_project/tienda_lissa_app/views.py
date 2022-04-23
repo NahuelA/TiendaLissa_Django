@@ -4,14 +4,16 @@
 
 # Typing
 import json
+from re import M
 from typing import (
     Any,
     ByteString,
     Literal,
     Iterable,
 )
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy
 
 # Local models
 from tienda_lissa_app.models import ModelSales
@@ -52,17 +54,19 @@ import datetime
 #**************|
 
 class ReadSales(ListView):
-    template_name = ""
+    model = ModelSales
+    template_name = "index.html"
 
     # NOTE: To obtain request data, we depend from HTTP method:
     # GET METHOD: request.GET['any']   || request.GET.get('any')
     # POST METHOD: request.POST['any'] || request.POST.get('any')
     # POST METHOD: request.data['any'] || request.data.get('any')
     def get_context_data(self, **kwargs):
-        
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context['query'] = ModelSales.objects.all()
+        return context
     
-# Create sale
+""" Create record """
 class CreateRecordSale(CreateView):
 
     # My model
@@ -70,29 +74,24 @@ class CreateRecordSale(CreateView):
     form_class = forms.FormSales
     # For indicate the form
     template_name = 'sales/sales_register.html'
-    template_name_suffix = '_form'
     # If save successful, redirec to:
-    success_url = 'http://localhost:8000/tiendalissa/crear-ventas/'
+    success_url = reverse_lazy('create-ventas')
+
+
+""" Delete record """    
+class DeleteRecordSale(DeleteView):
+    model = ModelSales
+    template_name = 'delete.html'
+    success_url = reverse_lazy('home')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['records'] = ModelSales.objects.all()
-        context['form'] = self.form_class
+        context['object'] = ModelSales.objects.get(id=self.object.id)
         return context
-
-    # Post form
-    def post(self,request):
-        
-        # save one record at a time
-        if request.method == "POST":
-            form = self.form_class(request.POST)
-
-            if form.is_valid():
-                
-                form.save()
-                return render(request,self.template_name,{'form':form})
-        # If form is invalid, return form
-        return render(request,self.template_name,{'form':form})
-        
+    
+""" Update record """
 class UpdateRecordSale(UpdateView):
-    pass
+    model = ModelSales
+    fields = ['name','description','count','price','paid_out']
+    template_name = 'update.html'
+    success_url = reverse_lazy('home')
